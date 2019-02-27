@@ -18,8 +18,7 @@ public class SearchAndSort {
 					System.out.println("How would you like to store it? An array or list?");
 					if (store == "array") {
 						///
-					}
-					else if (store == "list") {
+					} else if (store == "list") {
 						
 					}
 				}
