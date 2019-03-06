@@ -1,7 +1,7 @@
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
-
+import java.util.Collections;
 import java.util.Scanner;
 
 public class SearchAndSort {
@@ -9,159 +9,184 @@ public class SearchAndSort {
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
 		SearchAndSort sort = new SearchAndSort();
-		System.out.println("What algorithm would you like to execute? bubble, selection, insertion, merge, linear, binary? Type \"quit?\" to exit");
-		String type = in.nextLine().toLowerCase();
+		//type is the algorithm
+		String type = "";
+		//target is for searches
 		String target = "";
-		if (type.equals("linear") || type.equals("binary")) {
-			do {
-				System.out.println("What is the number you're searching for? ");
-				target = in.nextLine();
-			} while (!(type.matches("[0-9]")));
-		}
-		else if(type.equals("quit")) {
-			System.exit(0);
-		}
+		//data is the data type
+		String data = "";
+		//store is the storage used
+		String store = "";
 		
-		String data;
-		String store;
-		String numbers;
+		do {
+			System.out.println("What algorithm would you like to execute? bubble, selection, insertion, merge, linear, or binary? Type \"quit\" to exit.");
+			type = in.nextLine().toLowerCase();
+			if(type.matches("quit")) {
+				in.close();
+				return;
+			}
+		} while(!(type.matches("bubble") || type.matches("selection") || type.matches("insertion") || type.matches("merge") || type.matches("linear") || type.matches("binary")));
+		
+		if (type.equals("linear") || type.equals("binary")) {
+			boolean valid;
+			do {
+				valid = true;
+				System.out.println("What is the value you are searching for? ");
+				target = in.nextLine();
+				if (data.equals("integers")) {
+					try {
+						int i = Integer.parseInt(target);
+					}
+					catch (NumberFormatException e) {
+						valid  = true;
+						System.out.println("Try Again.");
+					}
+				}
+			} while(!valid);
+		}
 		
 		do {
 			System.out.println("What type of data? integers or strings?");
 			data = in.nextLine().toLowerCase();
-		} 
-		while (!(type.matches("bubble") || type.matches("selection") || type.matches("insertion") || type.matches("merge") || type.matches("linear")));
+			if(data.matches("quit")) {
+				in.close();
+				return;
+			}
+		} while(!(data.matches("integers") || data.matches("strings")));
+		
 		
 		do {
-			System.out.println("How would you like to store it? An array or list?");
+			System.out.println("What type of storage? array or list");
 			store = in.nextLine().toLowerCase();
-		} 
-		while (!(store.matches("list") || store.matches("array")));
-	
-		do {
-			System.out.println("What are the values you would like in the list? Only numbers and commas are allowed; no spaces.");
-			numbers = in.nextLine();
-		} 
-		while (!(numbers.matches("[0-9, /,]+")));
-	
-	//OPTIONS
-	if (store.equals("array")) {
-		if (data.equals("integers")) {
-			String[] intArray = numbers.split(",");
-			Integer ints[] = new Integer[intArray.length]; 
-			for (int i = 0; i < intArray.length; i++) 
-	            ints[i] = Integer.parseInt(intArray[i]);
-			System.out.println(Arrays.toString(ints));
-			
-			switch (type) {
-				case "bubble":
-					System.out.println("Bubble Sort: " + Arrays.toString(sort.bubbleSort(ints)));
-					break; 
-				case "selection":
-					System.out.println("Selection Sort: " + Arrays.toString(sort.selectionSort(ints)));
-					break;
-				case "insertion": 
-					System.out.println("Insertion Sort: " + Arrays.toString(sort.insertionSort(ints)));
-					break;
-				case "merge":
-					System.out.println("Merge Sort: " + Arrays.toString(sort.mergeSort(ints)));
-					break;
-				case "linear":
-					System.out.println("Linear Search: " + sort.linearSearch(ints, target));
-					break;
-				case "binary": 
-					System.out.println("Binary Search: " + sort.binarySearch(ints, target));
-					break; 
+			if(store.matches("quit")) {
+				in.close();
+				return;
 			}
-		}
-		else if (store.equals("strings")) {
-			String[] stringArray = numbers.split(",");
-			System.out.println(Arrays.toString(stringArray));
-			
-			switch (type) {
-				case "bubble":
-					System.out.println("Bubble Sort: " + Arrays.toString(sort.bubbleSort(stringArray)));
-					break; 
-				case "selection":
-					System.out.println("Selection Sort: " + Arrays.toString(sort.selectionSort(stringArray)));
-					break;
-				case "insertion": 
-					System.out.println("Insertion Sort: " + Arrays.toString(sort.insertionSort(stringArray)));
-					break;
-				case "merge":
-					System.out.println("Merge Sort: " + Arrays.toString(sort.mergeSort(stringArray)));
-					break;
-				case "linear":
-					System.out.println("Linear Search: " + sort.linearSearch(stringArray, target));
-					break;
-				case "binary": 
-					System.out.println("Binary Search: " + sort.binarySearch(stringArray, target));
-					break; 
-				}
-		}
-	}
-	else if (store.equals("list")) {
-		if (data.equals("integers")) {
-			String[] strings = numbers.split(",");
-			ArrayList<Integer> intList = new ArrayList<Integer>(strings.length);
-			for (int i = 0; i < strings.length; i++) {
-				intList.add(Integer.parseInt(strings[i])); 
-			}
-			System.out.println(Arrays.toString(strings));
-			
-			switch (type) {
-			case "bubble":
-				System.out.println("Bubble Sort: " + sort.bubbleSort(intList));
-				break; 
-			case "selection":
-				System.out.println("Selection Sort: " + sort.selectionSort(intList));
-				break;
-			case "insertion": 
-				System.out.println("Insertion Sort: " + sort.insertionSort(intList));
-				break;
-			case "merge":
-				System.out.println("Merge Sort: " + sort.mergeSort(intList));
-				break;
-			case "linear":
-				System.out.println("Linear Search: " + sort.linearSearch(intList, target));
-				break;
-			case "binary": 
-				System.out.println("Binary Search: " + sort.binarySearch(intList, target));
-				break; 
-			}
+		} while(!(store.matches("array") || store.matches("list")));
+		
 
+		ArrayList<?> bigData = new ArrayList();
+		if(data.matches("strings")) {
+			System.out.println("What are the values you would like in the list? Only letters and commas are allowed; no spaces."); 
+			String entry = in.nextLine();
+			ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(entry.split(",")));  
+			bigData = stringList;
+		} 
+		else if (data.matches("integers")) {
+			boolean good;
+			ArrayList<Integer> intArray;
+			do {
+				good = true;
+				intArray = new ArrayList<Integer>();
+				System.out.println("What are the values you would like in the list? Only numbers and commas are allowed; no spaces."); 
+				String inputData = in.nextLine();
+				String[] temp = inputData.split(",");
+				for(int i = 0; i < temp.length; i++) {
+					try {intArray.add(Integer.parseInt(temp[i]));} 
+					catch(Exception e) {
+						good = false;
+						System.out.println("Invalid Data");
+						break;
+					}
+				}
+			} while(!good);
+			bigData = intArray;
 		}
-		else if (data.equals("strings")) {
-			String[] strings = numbers.split(",");
-			ArrayList<String> stringList = new ArrayList<String>(strings.length); 
-			for(int i = 0; i < strings.length; i++) {
-				stringList.add(strings[i]);
+		sort.Sort(bigData, type, store, data, target);
+		in.close();
+		
+	}
+		
+	//OPTIONS
+	private void Sort(ArrayList<?> listData, String algorithmType, String storage, String dataType, String target) {
+		Integer[] integerArray = null;
+		if (dataType.equals("integers")) {
+			integerArray =  new Integer[listData.size()];
+			integerArray =  listData.toArray(integerArray);
+		}
+		
+		String[] stringArray = null;
+		if (dataType.equals("strings")) {
+			stringArray =  new String[listData.size()];
+			stringArray = (String[]) listData.toArray(stringArray);
+		}
+		
+		switch(algorithmType) {
+		case("bubble"):
+			if(storage.equals("list")) {
+				System.out.println("Bubble Sort:" + Arrays.toString(bubbleSort(listData).toArray()));
+			} 
+			else if (dataType.equals("strings")) {
+				System.out.println("Bubble Sort:" + Arrays.toString(bubbleSort(stringArray)));
+
+			} 
+			else {
+				System.out.println("Bubble Sort:" + Arrays.toString(bubbleSort(integerArray)));
 			}
-			System.out.println(Arrays.toString(strings)); 
+			break;
 			
-			switch (type) {
-			case "bubble":
-				System.out.println("Bubble Sort: " + sort.bubbleSortString(stringList));
-				break; 
-			case "selection":
-				System.out.println("Selection Sort: " + sort.selectionSortString(stringList));
-				break;
-			case "insertion": 
-				System.out.println("Insertion Sort: " + sort.insertionSortString(stringList));
-				break;
-			case "merge":
-				System.out.println("Merge Sort: " + sort.mergeSortString(stringList));
-				break;
-			case "linear":
-				System.out.println("Linear Search: " + sort.linearSearchString(stringList, target));
-				break;
-			case "binary": 
-				System.out.println("Binary Search: " + sort.binarySearchString(stringList, target));
-				break; 
+		case("selection"):
+			if(storage.equals("list")) {
+				System.out.println("Selection Sort:" + Arrays.toString(selectionSort(listData).toArray()));
+			} 
+			else if (dataType.equals("strings")) {
+				System.out.println("Selection Sort:" + Arrays.toString(selectionSort(stringArray)));
+
+			} 
+			else {
+				System.out.println("Selection Sort:" + Arrays.toString(selectionSort(integerArray)));
 			}
+			break;
+		case("insertion"):
+			if(storage.equals("list")) {
+				System.out.println("Insertion Sort:" + Arrays.toString(insertionSort(listData).toArray()));
+			} 
+			else if (dataType.equals("strings")) {
+				System.out.println("Insertion Sort:" + Arrays.toString(insertionSort(stringArray)));
+
+			} 
+			else {
+				System.out.println("Insertion Sort:" + Arrays.toString(insertionSort(integerArray)));
+			}
+			break;
+		case("merge"):
+			if(storage.equals("list")) {
+				System.out.println("Merge Sort:" + Arrays.toString(mergeSort(listData).toArray()));
+
+			} 
+			else if (dataType.equals("strings")) {
+				System.out.println("Merge Sort:" + Arrays.toString(mergeSort(stringArray)));
+
+			} 
+			else {
+				System.out.println("Merge Sort:" + Arrays.toString(mergeSort(integerArray)));
+
+			}
+			break;
+		case("linear"):
+			if(storage.equals("list")) {
+				System.out.println("Linear Search:" + String.valueOf(linearSearch(listData, target)));
+			} 
+			else if (dataType.equals("strings")) {
+				System.out.println("Linear Search:" + String.valueOf(linearSearch(stringArray, target)));
+			} 
+			else {
+				System.out.println("Linear Search:" + String.valueOf(linearSearch(integerArray, target)));
+			}
+			break;
+		case("binary"):
+			if(storage.equals("list")) {
+				System.out.println("Binary Search:" + String.valueOf(binarySearch(listData, target)));
+			} 
+			else if (dataType.equals("strings")) {
+				System.out.println("Binary Search:" + String.valueOf(binarySearch(stringArray, target)));
+			} 
+			else {
+				System.out.println("Binary Search:" + String.valueOf(binarySearch(integerArray, target)));
+			}
+			break;
 		}
 	}
-}
 
 		
 	//BUBBLE SORT INTEGER ARRAY 
@@ -182,37 +207,43 @@ public class SearchAndSort {
 	
 	//BUBBLE SORT STRING ARRAY
 	public String[] bubbleSort(String[] input) {
+		Collator c = Collator.getInstance();
 		int n = input.length; 
-        for (int i = 0; i < n - 1; i++) 
-            for (int j = 0; j < n - i - 1; j++) 
-                if (Integer.parseInt(input[j]) > Integer.parseInt(input[j + 1])) { 
-                    String temp = input[j]; 
-                    input[j] = input[j + 1]; 
-                    input[j + 1] = temp; 
-                } 
-        return input; 
+		for (int i = 0; i < n-1; i++) {
+            for (int j = 0; j < n-i-1; j++) {
+                if ( c.compare(input[j], input[j+1]) > 0) { 
+                	String temp = input[j];
+					input[j] = input[j + 1];
+					input[j + 1] = temp;
+                }
+            }
+		}
+		return input;
 	}
 	
-	//BUBBLE SORT INTEGER LIST
-	public ArrayList<Integer> bubbleSort(ArrayList<Integer> input) {
+	//BUBBLE SORT INTEGER & STRING LIST
+	public ArrayList<?> bubbleSort(ArrayList<?> input) {
+		Collator c = Collator.getInstance();
 		int n = input.size(); 
-        for (int i = 0; i < n - 1; i++) 
-            for (int j = 0; j < n - i - 1; j++) 
-                if (input.get(j) > input.get(j + 1)) { 
-                	input.set(j, input.set(j + 1, input.get(j)));
-                }
+		if (input.get(0) instanceof Integer) {
+			for (int i = 0; i < n - 1; i++) {
+	            for (int j = 0; j < n - i - 1; j++) {
+	                if ( (int) input.get(j) > (int) input.get(j + 1)) { 
+						Collections.swap(input, j, j + 1);
+	                } 
+	            }
+			}
+		} 
+		else {
+			for (int i = 0; i < n-1; i++) {
+	            for (int j = 0; j < n-i-1; j++) {
+	                if ( c.compare(input.get(j), input.get(j+1)) > 0) { 
+						Collections.swap(input, j, j+1);
+	                } 
+	            }
+			}
+		}
         return input;
-	}
-	
-	//BUBBLE SORT STRING LIST
-	public ArrayList<String> bubbleSortString(ArrayList<String> input) {
-		int n = input.size(); 
-        for (int i = 0; i < n - 1; i++) 
-            for (int j = 0; j < n - i - 1; j++) 
-                if (Integer.parseInt(input.get(j)) > Integer.parseInt(input.get(j + 1))) { 
-                	input.set(j, input.set(j + 1, input.get(j)));
-                }
-        return input; 
 	}
 	
 	//SELECTION SORT INTEGER ARRAY
@@ -230,54 +261,45 @@ public class SearchAndSort {
 		return input;
 	}
 	
-	//SELECTION SORT INTEGER LIST
-	public ArrayList<Integer> selectionSort(ArrayList<Integer> input) {
-		for (int i = 0; i < input.size() - 1; i++) {
-            int min_idx = i;
-            for (int j = i+1; j < input.size(); j++)
-                if (input.get(j) < input.get(min_idx))
-                    min_idx = j;
-
-            int temp = input.get(min_idx);
-            input.set(min_idx, input.get(i));
-            input.set(i, temp);
-		}
-		return input;
-    }
-	
 	//SELECTION SORT STRING ARRAY
 	public String[] selectionSort(String [] input) {
-		int n = input.length; 
-        for (int i = 0; i < n-1; i++) { 
-            int min_idx = i; 
-            for (int j = i + 1; j < n; j++) 
-                if (Integer.parseInt(input[j]) < Integer.parseInt(input[min_idx])) 
-                    min_idx = j; 
-  
-            String temp = input[min_idx]; 
-            input[min_idx] = input[i]; 
-            input[i] = temp; 
-        } 
+		Collator c = Collator.getInstance();
+		for (int i = 0; i < input.length; i++) {
+			int minimum = i;	
+			for (int j = i; j < input.length; j++) {
+				if (c.compare(input[j], input[minimum]) < 0) {
+					minimum = j;
+				}
+			}
+			String temp = input[minimum];
+			input[minimum] = input[i];
+			input[i] = temp;
+		}
         return input; 
 	}
 		
-	//SELECTION SORT STRING LIST
-	public ArrayList<String> selectionSortString(ArrayList<String> stringArray){
-		for(int i = 0; i < stringArray.size(); i++) {
-			int minindex = i;
-			
-			for(int j = i + 1; j < stringArray.size(); j++) {
-				if(stringArray.get(j).compareTo(stringArray.get(minindex)) < 0) {
-					minindex = j;
+	//SELECTION SORT STRING & INTEGER LIST
+	public ArrayList<?> selectionSort(ArrayList<?> input) {
+		Collator c = Collator.getInstance();
+		for (int j = 0; j < input.size(); j++) {
+			int minimum = j;	
+			for (int i = j; i < input.size(); i++) {
+				if (input.get(0) instanceof Integer) {
+					if ((int) input.get(i) < (int) input.get(minimum)) {
+						minimum = i;
+					}
+				}
+				else {
+					if (c.compare(input.get(i), input.get(minimum)) < 0) {
+						minimum = i;
+					}
 				}
 			}
-			
-			String temp = stringArray.get(i);
-			stringArray.set(i, stringArray.get(minindex));
-			stringArray.set(minindex, temp);
+			Collections.swap(input, minimum, j);
 		}
-		return stringArray;
+		return input;
 	}
+	
 	
 	//INSERTION SORT INTEGER ARRAY
 	public Integer[] insertionSort(Integer[] input) {
@@ -288,7 +310,7 @@ public class SearchAndSort {
   
             while (j >= 0 && input[j] > key) { 
                 input[j + 1] = input[j]; 
-                j = j-1; 
+                j = j - 1; 
             } 
             input[j + 1] = key; 
         } 
@@ -297,51 +319,54 @@ public class SearchAndSort {
 	
 	//INSERTION SORT STRING ARRAY
 	public String[] insertionSort(String[] input) {
-		int n = input.length; 
-        for (int i = 1; i < n; ++i) 
-        { 
-            String key = input[i]; 
-            int j = i - 1; 
-  
-            while (j >= 0 && Integer.parseInt(input[j]) > Integer.parseInt(key)) 
-            { 
-                input[j + 1] = input[j]; 
-                j = j - 1; 
-            } 
-            input[j + 1] = key; 
-        }
-        return input; 
-	}
-		
-	//INSERTION SORT STRING LIST
-	public ArrayList<String> insertionSortString(ArrayList<String> input){
-		for(int i = 1; i < input.size(); i++) {
-			String key = input.get(i);
-			int j = i - 1;
-			
-			while(j >= 0 && input.get(j).compareTo(key) > 0) {
-				input.set(j + 1, input.get(j));
-				j--;
-			}
-			input.set(j + 1, key);
+		Collator c = Collator.getInstance();
+		int i;
+		int j;
+		String compare;
+		for (i = 1; i < input.length; i++) { 
+			compare = input[i]; 
+			j = i - 1; 
+			while (j >= 0 && c.compare(input[j], compare) > 0) { 
+				input[j + 1] = input[j]; 
+				j = j - 1; 
+			} 
+				input[j + 1] = compare; 
 		}
 		return input;
 	}
-	
-	//INSERTION SORT INTEGER LIST
-	public ArrayList<Integer> insertionSort(ArrayList<Integer> input) {
-		int n = input.size(); 
-        for (int i = 1; i < n; ++i) 
-        { 
-            int key = input.get(i); 
-            int j = i - 1; 
-  
-            while (j >= 0 && input.get(j) > key) { 
-            	input.set(j + 1, input.get(j));
-            } 
-            input.set(j + 1, key); 
-        }
-        return input; 
+		
+	//INSERTION SORT STRING & INTEGER LIST
+	public ArrayList insertionSort(ArrayList input) {
+		if(input.get(0) instanceof Integer) {
+			int i;
+			int compare;
+			int j; 
+			for (i = 1; i < input.size(); i++) { 
+				compare = (int) input.get(i); 
+				j = i - 1; 
+				while (j >= 0 && (int) input.get(j) > compare) { 
+					input.set(j+1, input.get(j)); 
+					j = j-1; 
+				} 
+				input.set(j + 1, compare); 
+			}
+		} 
+		else {
+			Collator c = Collator.getInstance();
+			int i;
+			int j;
+			String compare;
+			for (i = 1; i < input.size(); i++) { 
+				compare = (String) input.get(i); 
+				j = i - 1; 
+				while (j >= 0 && c.compare(input.get(j), compare) > 0) { 
+					input.set(j + 1, input.get(j)); 
+					j = j - 1; 
+				} 
+				input.set(j + 1, compare); 
+			}
+		}
+		return input;
 	}
 	
 	//MERGE SORT INTEGER ARRAY
@@ -406,7 +431,7 @@ public class SearchAndSort {
 		int i = 0;
 		int j = 0;
 		int k = 0;
-	    while (i < midpoint && j < (length-midpoint)) {
+	    while (i < midpoint && j < (length - midpoint)) {
 	        if (Integer.parseInt(first[i]) <= Integer.parseInt(second[j])) {
 	        	input[k++] = first[i++];
 	        }
@@ -423,94 +448,73 @@ public class SearchAndSort {
 	    return input; 
 	}
 	
-	//MERGE SORT INTEGER LIST
-	public ArrayList<Integer> mergeSort(ArrayList<Integer> input) {
-		int size = input.size();
-		
-		if(size < 2) {
+	//MERGE SORT INTEGER & STRING LIST
+	public ArrayList<?> mergeSort(ArrayList input) {
+		Collator c = Collator.getInstance();
+		if (input.size() < 2) {
 			return input;
 		}
 		
-		int middle = size/2;
-		ArrayList<Integer> left = new ArrayList<Integer>(middle);
-		ArrayList<Integer> right = new ArrayList<Integer>(input.size()- middle);
-		
-		
-		for(int i = 0; i < middle; i++) {
-			left.add(input.remove(0));
-		}
-	    while (input.size()!=0) {
-	    	right.add(input.remove(0));
-	    }
-
-	    mergeSort(left);  
-	    mergeSort(right); 
-
-	    while (left.size()!=0 && right.size()!=0) {
-	     
-	      if (left.get(0) < right.get(0)) {
-	    	  input.add(left.remove(0));
-	      }
-	      else {
-	    	  input.add(right.remove(0));
-	      }
-	    }
-
-	  
-	    while(left.size()!=0) {
-	    	input.add(left.remove(0));
-	    }
-	    while(right.size()!=0) {
-	    	input.add(right.remove(0));
-	    }
+		ArrayList<?> first = new ArrayList(input.subList(0, input.size()/2));
+		ArrayList<?> second = new ArrayList(input.subList(input.size()/2, input.size()));
+        
+		first = mergeSort(first);
+		second = mergeSort(second);
+		if(input.get(0) instanceof Integer) {
+			int i = 0, j = 0, k = 0; 
+	        while (i < first.size() && j < second.size()) { 
+	            if ( (int) first.get(i) <= (int) second.get(j)) { 
+	            	input.set(k, first.get(i)); 
+	                i++; 
+	            } 
+	            else { 
+	            	input.set(k, second.get(j)); 
+	                j++; 
+	            } 
+	            k++; 
+	        } 
+	        while (i < first.size()) { 
+	        	input.set(k, first.get(i)); 
+	            i++; 
+	            k++; 
+	        } 
+	        while (j < second.size()) { 
+	        	input.set(k, second.get(j)); 
+	            j++; 
+	            k++; 
+	        } 
+		} 
+		else {
+			int i = 0, j = 0, k = 0; 
+	        while (i < first.size() && j < second.size()) { 
+	            if (c.compare(first.get(i), second.get(j)) < 0) { 
+	            	input.set(k, first.get(i)); 
+	                i++; 
+	            } 
+	            else { 
+	            	input.set(k, second.get(j)); 
+	                j++; 
+	            } 
+	            k++; 
+	        } 
+	        while (i < first.size()) { 
+	        	input.set(k, first.get(i)); 
+	            i++; 
+	            k++; 
+	        } 
+	        while (j < second.size()) { 
+	        	input.set(k, second.get(j)); 
+	            j++; 
+	            k++; 
+	        } 		}
 		return input;
-	}
-
-	public ArrayList<String> mergeSortString(ArrayList<String> input) {
-		int length = input.size();
-		int midpoint = (int) length/2;
-		
-		if (length < 2) {
-			return input;
-		}
-		
-		ArrayList<String> first = new ArrayList<String>(midpoint);
-		for (int i = 0; i < midpoint; i++) {
-			first.set(i, input.get(i));
-		}
-		ArrayList<String> second = new ArrayList<String>(length - midpoint); 
-		for (int i = midpoint; i < length; i++) {
-			second.set(i-midpoint, input.get(i));
-		}
-		
-		first = mergeSortString(first);
-		second = mergeSortString(second);
-		
-		int i = 0;
-		int j = 0;
-		int k = 0;
-	    while (i < midpoint && j < (length-midpoint)) {
-	        if (Integer.parseInt(first.get(i)) <= Integer.parseInt(second.get(j))) {
-	        	input.set(k++, first.get(i++));
-	        }
-	        else {
-	        	input.set(k++, second.get(j++)); 
-	        }
-	    }
-	    while (i < midpoint) {
-	    	input.set(k++, first.get(i++));
-	    }
-	    while (j < (length-midpoint)) {
-	    	input.set(k++, second.get(j++));
-	    }
-	    return input; 
 	}
 	
 	//LINEAR SEARCH INTEGER ARRAY
 	public int linearSearch(Integer[] input, String target) { 
-		int t = Integer.parseInt(target);
+		int targetVal = Integer.parseInt(target);
 		for (int i = 0; i < input.length; i++) {
-			if ((input[i]).equals(t) ) {
+			if ((input[i]).equals(targetVal) ) {
 				return i;
 			}
 		}
@@ -527,23 +531,14 @@ public class SearchAndSort {
 		return -1;
 	}
 	
-	//LINEAR SEARCH INTEGER LIST
-	public int linearSearch(ArrayList<Integer> input, String target) { 
-		int t = Integer.parseInt(target);
-		
-		for(int i = 0; i < input.size(); i++) {
-			if(input.get(i) == t) {
-				return i;
+	//LINEAR SEARCH INTEGER & STRING LIST
+	public int linearSearch(ArrayList<?> input, String target) {
+		for (int i = 0; i < input.size(); i++) {
+			Object k = (Object)target;
+			if (input.get(i) instanceof Integer) {
+				k =  (Object)Integer.parseInt(k.toString());
 			}
-		}
-		
-		return -1;
-	}
-	
-	//LINEAR SEARCH STRING LIST
-	public int linearSearchString(ArrayList<String> input, String target) { 
-		for(int i = 0; i< input.size(); i++) {
-			if(input.get(i).equals(target)) {
+			if (((Object)input.get(i)).equals(k) ) {
 				return i;
 			}
 		}
@@ -592,49 +587,43 @@ public class SearchAndSort {
 		}	
 		return -1;
 	}
-	//BINARY SEARCH INTEGER LIST
-	public int binarySearch(ArrayList<Integer> intArray, String x) {
-		ArrayList<Integer> array = selectionSort(intArray);
-		int target = Integer.parseInt(x);
+	//BINARY SEARCH INTEGER & STRING LIST
+	public int binarySearch(ArrayList<?> input, String target) {
+		Collator c = Collator.getInstance();
+		ArrayList sorted = mergeSort(input);
 		
-			int newmid = 0;
-			int size = array.size()-1;
-			
-			while(newmid <= size) {
-				int mid = newmid + (array.size()-1)/2;
-				if(target == array.get(mid)) {
-					return mid;
+		Object t = (Object)target;
+		if (input.get(0) instanceof Integer) {
+			t =  (Object)Integer.parseInt(t.toString());
+		}
+		int l = 0;
+		int h = input.size() - 1;
+		while(l <= h) {
+			int index = l + (h -  l) / 2;
+			if (input.get(0) instanceof Integer) {
+				
+				if ((Integer) sorted.get(index) == (Integer) t) {
+					return index;
 				}
-				else if(target > array.get(mid)) {
-					newmid = mid+1;
+				else if ((Integer) sorted.get(index) > (Integer) t) {
+					h = index - 1;
 				}
 				else {
-					size = mid -1;
+					l = index + 1;
 				}
 			}
-			
-			return -1;
-	}
-	
-	public int binarySearchString(ArrayList<String> input, String target) {
-		ArrayList<String> array = selectionSortString(input);
-		
-		int newmid = 0;
-		int size = array.size()-1;
-		
-		while(newmid <= size) {
-			int mid = newmid + (array.size()-1)/2;
-			if(target.equals(array.get(mid))) {
-				return mid;
-			}
-			else if(target.compareTo(array.get(mid)) < 0) {
-				newmid = mid+1;
-			}
 			else {
-				size = mid -1;
+				if (c.compare(sorted.get(index).toString(),(String) t) == 0) {
+					return index;
+				}
+				else if (c.compare(sorted.get(index).toString(),(String)t) > 0) {
+					h = index - 1;
+				}
+				else {
+					l = index + 1;
+				}
 			}
-		}
-		
+		}	
 		return -1;
 	}
 }
